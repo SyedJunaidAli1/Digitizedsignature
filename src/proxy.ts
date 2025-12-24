@@ -4,15 +4,11 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Redirect /about → /
-  if (pathname === "/about") {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/about", "/dashboard"],
+  matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+  ],
 };

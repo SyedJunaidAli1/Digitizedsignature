@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { Button } from "@/src/components/ui/button";
+import { authClient } from "@/src/lib/auth-client";
 import Link from "next/link";
 
 const page = () => {
@@ -9,7 +9,7 @@ const page = () => {
       provider: "google",
     });
   };
-  
+
   return (
     <>
       <main>
