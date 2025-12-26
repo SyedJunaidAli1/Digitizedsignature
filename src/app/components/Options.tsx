@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +14,22 @@ import {
 } from "@/components/ui/select";
 import { CurveType, KeyboardLayout } from "@/src/lib/util/constant";
 
-const Options = ({ layout, setLayout, curveType, setCurveType }: { layout: KeyboardLayout; setLayout: (layout: KeyboardLayout) => void; curveType: CurveType; setCurveType: (curveType: CurveType) => void }) => {
+const Options = ({
+  layout,
+  setLayout,
+  curveType,
+  setCurveType,
+}: {
+  layout: KeyboardLayout;
+  setLayout: (layout: KeyboardLayout) => void;
+  curveType: CurveType;
+  setCurveType: (curveType: CurveType) => void;
+}) => {
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button>Options</Button>
+          <div>Options</div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>Options</DropdownMenuLabel>
@@ -29,7 +38,7 @@ const Options = ({ layout, setLayout, curveType, setCurveType }: { layout: Keybo
               value={layout}
               onValueChange={(v) => setLayout(v as KeyboardLayout)}
             >
-              <SelectTrigger className="w-[140px] bg-zinc-900 border-zinc-800">
+              <SelectTrigger>
                 <SelectValue placeholder="Layout" />
               </SelectTrigger>
               <SelectContent>
@@ -41,13 +50,13 @@ const Options = ({ layout, setLayout, curveType, setCurveType }: { layout: Keybo
               </SelectContent>
             </Select>
           </DropdownMenuItem>
+
           <DropdownMenuItem>
-            {" "}
             <Select
               value={curveType}
               onValueChange={(v) => setCurveType(v as CurveType)}
             >
-              <SelectTrigger className="w-[160px] bg-zinc-900 border-zinc-800">
+              <SelectTrigger>
                 <SelectValue placeholder="Curve Style" />
               </SelectTrigger>
               <SelectContent>
