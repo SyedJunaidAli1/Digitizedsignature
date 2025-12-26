@@ -1,15 +1,15 @@
-import { KeyboardLayout, CurveType } from "@/src/lib/util/constant";
+import { KeyboardLayout, CurveType } from "@/lib/util/constant";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+} from "components/ui/select";
+import { Switch } from "components/ui/switch";
+import { Label } from "components/ui/label";
 import { ColorPicker } from "./ColorPicker";
-import { Slider } from "@/components/ui/slider";
+import { Slider } from "components/ui/slider";
 
 interface OptionsProps {
   layout: KeyboardLayout;

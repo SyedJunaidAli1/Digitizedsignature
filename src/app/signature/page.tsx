@@ -7,8 +7,8 @@ import {
   CurveType,
   getKeyboardLayout,
   numberRow,
-} from "@/src/lib/util/constant";
-import Options from "../components/Options";
+} from "@/lib/util/constant";
+import Options from "@/app/components/Options";
 
 const KeyboardSignature = () => {
   const [text, setText] = useState("");

@@ -1,4 +1,4 @@
-import { CurveType } from "@/src/lib/util/constant";
+import { CurveType } from "@/lib/util/constant";
 
 export function CurveSelector({
   value,

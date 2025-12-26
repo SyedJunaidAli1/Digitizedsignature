@@ -1,12 +1,11 @@
-// components/LayoutSelector.tsx
+import { KeyboardLayout } from "@/lib/util/constant";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { KeyboardLayout } from "@/src/lib/util/constant";
+} from "components/ui/select";
 
 interface Props {
   value: KeyboardLayout;
