@@ -16,12 +16,13 @@ const KeyboardSignature = () => {
   const [curveType, setCurveType] = useState<CurveType>("linear");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [includeNumbers, setIncludeNumbers] = useState(false);
+  const [color, setColor] = useState("#FFFFFF"); // Default white
+  const [strokeWidth, setStrokeWidth] = useState(3); // Default thickness
 
   // Drawing Constants
   const SCALE = 80;
   const OFFSET_X = 0;
   const OFFSET_Y = 50;
-
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -29,13 +30,11 @@ const KeyboardSignature = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // IMPORTANT: Use your helper function here!
     // This merges numberRow + keyboardLayouts[layout]
     const currentLayoutData = getKeyboardLayout(layout, includeNumbers);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // ADJUST OFFSET: Because numbers are at y: -1,
     // we need to push everything down so the numbers aren't cut off at the top.
     const DRAW_OFFSET_Y = includeNumbers ? OFFSET_Y + 60 : OFFSET_Y;
 
@@ -78,13 +77,18 @@ const KeyboardSignature = () => {
       const pathData = generatePath(pixelPoints, curveType);
       const path = new Path2D(pathData);
 
+      // Apply the styles from state
       ctx.shadowBlur = 15;
-      ctx.shadowColor = "#6366f1";
-      ctx.strokeStyle = "#6366f1";
-      ctx.lineWidth = 3;
+      ctx.shadowColor = color; // Glow matches the line color
+      ctx.strokeStyle = color; // Line matches the picker
+      ctx.lineWidth = strokeWidth; // Width matches the slider
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
       ctx.stroke(path);
+      ctx.shadowBlur = 0;
     }
-  }, [text, layout, curveType, includeNumbers]); // includeNumbers MUST be here
+  }, [text, layout, curveType, includeNumbers, color, strokeWidth]); // includeNumbers MUST be here
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -97,6 +101,10 @@ const KeyboardSignature = () => {
             setCurveType={setCurveType}
             includeNumbers={includeNumbers}
             setIncludeNumbers={setIncludeNumbers}
+            color={color}
+            setColor={setColor}
+            strokeWidth={strokeWidth}
+            setStrokeWidth={setStrokeWidth}
           />
         </div>
 
@@ -112,7 +120,7 @@ const KeyboardSignature = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Type your signature..."
-            className="w-full mt-10  border-b py-4 text-3xl text-center focus:outline-none focus:border-indigo-500 transition-all font-light tracking-widest"
+            className="w-full mt-10  border-b py-4 text-3xl text-center focus:outline-none focus:border-primary transition-all font-light tracking-widest"
           />
         </div>
       </div>

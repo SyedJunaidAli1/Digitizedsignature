@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { ColorPicker } from "./ColorPicker";
+import { Slider } from "@/components/ui/slider";
 
 interface OptionsProps {
   layout: KeyboardLayout;
@@ -16,6 +18,10 @@ interface OptionsProps {
   setCurveType: (c: CurveType) => void;
   includeNumbers: boolean;
   setIncludeNumbers: (v: boolean) => void;
+  color: string;
+  setColor: (c: string) => void;
+  strokeWidth: number;
+  setStrokeWidth: (w: number) => void;
 }
 
 const Options = ({
@@ -25,6 +31,10 @@ const Options = ({
   setCurveType,
   includeNumbers,
   setIncludeNumbers,
+  color,
+  setColor,
+  strokeWidth,
+  setStrokeWidth,
 }: OptionsProps) => {
   const curveOptions: CurveType[] = [
     "linear",
@@ -66,6 +76,27 @@ const Options = ({
           checked={includeNumbers}
           onCheckedChange={(checked) => setIncludeNumbers(checked)}
         />
+      </div>
+
+      {/* Style Section */}
+      <div className="flex items-center gap-4 border-l border-neutral-800 pl-6">
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[10px] uppercase tracking-widest font-bold">
+            Color
+          </p>
+          <div className="flex items-center gap-4">
+            <ColorPicker value={color} onChange={setColor} />
+            <label htmlFor="stroke-width">Width:</label>
+            <Slider
+              value={[strokeWidth]}
+              onValueChange={(v) => setStrokeWidth(v[0])}
+              max={8}
+              min={2}
+              step={0.5}
+              className="w-30"
+            />
+          </div>
+        </div>
       </div>
 
       {/* 2. Curve Selection (Your New Custom Implementation) */}
