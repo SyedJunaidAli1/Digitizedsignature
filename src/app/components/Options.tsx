@@ -22,6 +22,10 @@ interface OptionsProps {
   setColor: (c: string) => void;
   strokeWidth: number;
   setStrokeWidth: (w: number) => void;
+  strokeStyle: "solid" | "gradient";
+  setStrokeStyle: (s: "solid" | "gradient") => void;
+  color2: string;
+  setColor2: (c: string) => void;
 }
 
 const Options = ({
@@ -35,6 +39,10 @@ const Options = ({
   setColor,
   strokeWidth,
   setStrokeWidth,
+  strokeStyle,
+  setStrokeStyle,
+  color2,
+  setColor2,
 }: OptionsProps) => {
   const curveOptions: CurveType[] = [
     "linear",
@@ -78,23 +86,51 @@ const Options = ({
         />
       </div>
 
-      {/* Style Section */}
+      {/* Inside Options.tsx return */}
       <div className="flex items-center gap-4 border-l pl-4">
-        <div className="flex flex-col gap-1.5">
-          <p className="text-sm uppercase tracking-widest font-bold">Color</p>
-          <div className="flex items-center gap-2">
-            <ColorPicker value={color} onChange={setColor} />
-            <label htmlFor="stroke-width">Width:</label>
-            <Slider
-              value={[strokeWidth]}
-              onValueChange={(v) => setStrokeWidth(v[0])}
-              max={8}
-              min={2}
-              step={1}
-              className="w-30"
-            />
-            <p>{strokeWidth}px</p>
-          </div>
+        <p className="text-sm font-medium">Style</p>
+        <div className="flex gap-1 p-1 rounded-full border ">
+          {(["solid", "gradient"] as const).map((style) => (
+            <button
+              key={style}
+              onClick={() => setStrokeStyle(style)}
+              className={`px-3 py-1 text-[10px] uppercase tracking-tighter rounded-full transition-all cursor-pointer ${
+                strokeStyle === style
+                  ? "bg-white text-black font-bold"
+                  : "text-neutral-500 hover:text-neutral-200"
+              }`}
+            >
+              {style}
+            </button>
+          ))}
+        </div>
+      </div>
+      {/* Inside the Style Section of Options.tsx */}
+      <div className="flex flex-col gap-1.5">
+        <p className="text-sm uppercase tracking-widest font-bold">Color</p>
+        <div className="flex items-center gap-2">
+          <ColorPicker value={color} onChange={setColor} />
+
+          {/* Show second picker only for gradients */}
+          {strokeStyle === "gradient" && (
+            <>
+              <span className="text-neutral-500">→</span>
+              <ColorPicker value={color2} onChange={setColor2} />
+            </>
+          )}
+
+          <label htmlFor="stroke-width" className="ml-2">
+            Width:
+          </label>
+          <Slider
+            value={[strokeWidth]}
+            onValueChange={(v) => setStrokeWidth(v[0])}
+            max={8}
+            min={2}
+            step={0.5}
+            className="w-24"
+          />
+          <p className="text-xs font-mono w-8">{strokeWidth}</p>
         </div>
       </div>
 
