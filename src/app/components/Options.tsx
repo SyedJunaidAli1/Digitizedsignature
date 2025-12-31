@@ -10,6 +10,19 @@ import { Switch } from "components/ui/switch";
 import { Label } from "components/ui/label";
 import { ColorPicker } from "./ColorPicker";
 import { Slider } from "components/ui/slider";
+import {
+  ChevronDown,
+  Keyboard,
+  MoveRight,
+  Palette,
+  Settings2,
+} from "lucide-react";
+import { Button } from "components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface OptionsProps {
   layout: KeyboardLayout;
@@ -53,124 +66,149 @@ const Options = ({
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-x-8 gap-y-6 p-5 rounded-2xl border backdrop-blur-sm text-card-foreground shadow-sm">
-      {/* GROUP 1: BASE CONFIG */}
-      <div className="flex items-center gap-6">
-        <div className="space-y-1.5">
-          <Label className="text-sm uppercase tracking-wider text-muted-foreground font-bold">
-            Layout
-          </Label>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="gap-2 rounded-xl backdrop-blur-md">
+          <Settings2 className="w-4 h-4" />
+          <span>Options</span>
+          <ChevronDown className="w-3 h-3 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        className="w-80 p-5 rounded-2xl shadow-2xl space-y-6"
+        align="start"
+      >
+        {/* SECTION: KEYBOARD */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest">
+            <Keyboard className="w-3 h-3" />
+            <span>Keyboard Configuration</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4  p-3 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Layout</Label>
+              <Select
+                value={layout}
+                onValueChange={(v) => setLayout(v as KeyboardLayout)}
+              >
+                <SelectTrigger className="w-32 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(KeyboardLayout).map((l) => (
+                    <SelectItem key={l} value={l}>
+                      {l}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Include Numbers</Label>
+              <Switch
+                checked={includeNumbers}
+                onCheckedChange={setIncludeNumbers}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION: STYLE */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest">
+            <Palette className="w-3 h-3" />
+            <span>Visual Style</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 p-3 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Style</Label>
+              <div className="flex p-0.5 rounded-md border">
+                {(["solid", "gradient"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStrokeStyle(s)}
+                    className="px-3 py-1 text-[10px] uppercase font-bold rounded-sm transition-all"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">
+                {strokeStyle === "gradient" ? "Colors" : "Color"}
+              </Label>
+              <div className="flex items-center gap-2">
+                <ColorPicker value={color} onChange={setColor} />
+                {strokeStyle === "gradient" && (
+                  <>
+                    <ColorPicker value={color2} onChange={setColor2} />
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-1">
+              <div className="flex justify-between">
+                <Label className="text-xs">Stroke Width</Label>
+                <span className="text-[10px] font-mono">{strokeWidth}px</span>
+              </div>
+              <Slider
+                value={[strokeWidth]}
+                onValueChange={(v) => setStrokeWidth(v[0])}
+                max={8}
+                min={2}
+                step={1}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION: GEOMETRY */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest">
+            <Settings2 className="w-3 h-3" />
+            <span>Curve</span>
+          </div>
           <Select
-            value={layout}
-            onValueChange={(v) => setLayout(v as KeyboardLayout)}
+            value={curveType}
+            onValueChange={(v) => setCurveType(v as CurveType)}
           >
-            <SelectTrigger className="w-32 h-9 bg-background">
+            <SelectTrigger className="w-full h-9 capitalize">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(KeyboardLayout).map((l) => (
-                <SelectItem key={l} value={l}>
-                  {l.toUpperCase()}
+              {curveOptions.map((type) => (
+                <SelectItem key={type} value={type} className="capitalize">
+                  {type.replace("-", " ")}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="space-y-2.5 flex flex-col items-center">
-          <Label
-            htmlFor="numbers"
-            className="text-sm uppercase tracking-wider text-muted-foreground font-bold"
-          >
-            Numbers
-          </Label>
-          <Switch
-            id="numbers"
-            checked={includeNumbers}
-            onCheckedChange={setIncludeNumbers}
-          />
-        </div>
-      </div>
-
-      <div className="h-10 bg-border hidden md:block" />
-
-      {/* GROUP 2: STROKE STYLE */}
-      <div className="flex items-center gap-6">
-        <div className="space-y-1.5">
-          <Label className="text-sm uppercase tracking-wider text-muted-foreground font-bold">
-            Appearance
-          </Label>
-          <div className="flex items-center gap-3 h-9">
-            <div className="flex p-1 rounded-md border bg-background">
-              {(["solid", "gradient"] as const).map((style) => (
-                <button
-                  key={style}
-                  onClick={() => setStrokeStyle(style)}
-                  className={`px-3 py-1 text-sm uppercase font-bold rounded-sm transition-all ${
-                    strokeStyle === style
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <ColorPicker value={color} onChange={setColor} />
-              {strokeStyle === "gradient" && (
-                <>
-                  <ColorPicker value={color2} onChange={setColor2} />
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-1.5 min-w-30">
-          <div className="flex justify-between items-center">
-            <Label className="text-sm uppercase tracking-wider text-muted-foreground font-bold">
-              Width
-            </Label>
-            <span className="text-sm font-mono font-medium">
-              {strokeWidth}px
-            </span>
-          </div>
-          <Slider
-            value={[strokeWidth]}
-            onValueChange={(v) => setStrokeWidth(v[0])}
-            max={8}
-            min={2}
-            step={1}
-            className="py-3"
-          />
-        </div>
-      </div>
-
-      <div className="h-10 bg-border hidden lg:block" />
-
-      {/* GROUP 3: CURVE TYPE */}
-      <div className="space-y-1.5 flex-1">
-        <Label className="text-sm uppercase tracking-wider text-muted-foreground font-bold">
-          Curve
-        </Label>
-        <div className="flex flex-wrap gap-1.5">
-          {curveOptions.map((type) => (
-            <button
-              key={type}
-              onClick={() => setCurveType(type)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md border transition-all ${
-                curveType === type
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-background text-muted-foreground hover:border-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {type.replace("-", " ")}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full mt-4 text-[10px] uppercase tracking-widest"
+          onClick={() => {
+            setLayout("qwerty");
+            setIncludeNumbers(false);
+            setStrokeStyle("solid");
+            setColor("#FFFFFF");
+            setStrokeWidth(3);
+            setCurveType("linear");
+          }}
+        >
+          Reset to Default
+        </Button>
+      </PopoverContent>
+    </Popover>
   );
 };
 
