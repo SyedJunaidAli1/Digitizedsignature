@@ -50,7 +50,7 @@ const KeyboardSignature = () => {
 
     // 2. GEOMETRY (Matching your "spacious" photo)
     const KEY_SIZE = 56;
-    const RADIUS = 12;
+    const RADIUS = 8;
     const SPACING = 62; // Large gaps between keys
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
