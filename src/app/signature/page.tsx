@@ -81,11 +81,9 @@ const KeyboardSignature = () => {
       ctx.lineWidth = strokeWidth;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.shadowBlur = 12; // High blur for that neon look
       ctx.shadowColor = color;
 
       // Handle Gradient vs Solid
-      // Inside your useEffect in KeyboardSignature.tsx
       if (strokeStyle === "gradient") {
         const xCoords = pixelPoints.map((p) => p.x);
         const yCoords = pixelPoints.map((p) => p.y);

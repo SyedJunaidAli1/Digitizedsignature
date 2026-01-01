@@ -193,7 +193,7 @@ const Options = ({
         <Button
           variant="ghost"
           size="sm"
-          className="w-full text-sm "
+          className="w-full text-sm"
           onClick={() => {
             setLayout("qwerty");
             setIncludeNumbers(false);
