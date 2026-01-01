@@ -175,18 +175,18 @@ const KeyboardSignature = () => {
           color2={color2}
           setColor2={setColor2}
         />
-        <canvas
-          ref={canvasRef}
-          width={620}
-          height={300}
-          className="w-auto h-auto"
-        />
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter your name"
-          className="border-b text-2xl text-center text-primary focus:outline-none focus:border-primary transition-all font-light tracking-widest"
+          className="border-b text-2xl mt-2 text-center text-primary focus:outline-none focus:border-primary transition-all font-light tracking-widest"
+        />
+        <canvas
+          ref={canvasRef}
+          width={620}
+          height={300}
+          className="w-auto h-auto"
         />
       </div>
     </div>
