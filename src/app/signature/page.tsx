@@ -230,7 +230,7 @@ const KeyboardSignature = () => {
       </div>
 
       {/* The Drawing Area */}
-      <div className="relative w-full max-w-6xl h-[550px] flex items-center justify-center">
+      <div className="relative w-full max-w-6xl h-140 flex items-center justify-center">
         {/* LAYER 1: The Keyboard (With Motion) */}
         <motion.div
           animate={{
@@ -245,7 +245,7 @@ const KeyboardSignature = () => {
             ref={keyboardCanvasRef}
             width={1200}
             height={600}
-            className="w-full h-full object-contain opacity-40 dark:opacity-100"
+            className="w-full h-full object-contain"
           />
         </motion.div>
 
