@@ -7,59 +7,79 @@ import {
   getKeyboardLayout,
 } from "@/lib/util/constant";
 import Options from "@/app/components/Options";
+import { motion } from "motion/react";
 
 const KeyboardSignature = () => {
   const [text, setText] = useState("");
   const [layout, setLayout] = useState<KeyboardLayout>(KeyboardLayout.QWERTY);
   const [curveType, setCurveType] = useState<CurveType>("linear");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [includeNumbers, setIncludeNumbers] = useState(false);
-  const [color, setColor] = useState("#FFFFFF"); // Default white
-  const [color2, setColor2] = useState("#ec4899"); // Secondary (Pinkish)
-  const [strokeWidth, setStrokeWidth] = useState(2); // Default thickness
+  const [color, setColor] = useState("#FFFFFF");
+  const [color2, setColor2] = useState("#ec4899");
+  const [strokeWidth, setStrokeWidth] = useState(3);
   const [strokeStyle, setStrokeStyle] = useState<"solid" | "gradient">("solid");
 
-  // Drawing Constants
-  const OFFSET_X = 0;
-  const OFFSET_Y = 50;
+  // Animation States
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Canvas Refs
+  const keyboardCanvasRef = useRef<HTMLCanvasElement>(null);
+  const pathCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // SHARED GEOMETRY - Keep these synced for perfect alignment
+  const OFFSET_X = 180;
+  const OFFSET_Y = 80;
+  const KEY_SIZE = 56;
+  const RADIUS = 8;
+  const SPACING = 62;
+
+  // 1. TYPING LOGIC: Trigger fade only after typing begins
   useEffect(() => {
-    const canvas = canvasRef.current;
+    if (text.length > 0) {
+      setIsTyping(true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+      }, 2500); // Fades out after 2.5s of silence
+    } else {
+      // If text is cleared, bring keyboard back
+      setIsTyping(false);
+    }
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, [text]);
+
+  // 2. DRAW KEYBOARD LAYER (Static Keys + Hit States)
+  useEffect(() => {
+    const canvas = keyboardCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // 1. GET COLORS FROM YOUR GLOBAL.CSS
     const rootStyle = getComputedStyle(document.documentElement);
-    const getVar = (name: string) => rootStyle.getPropertyValue(name).trim();
-
     const colors = {
-      background: getVar("--background"),
-      foreground: getVar("--foreground"),
-      muted: getVar("--muted"),
-      mutedForeground: getVar("--muted-foreground"),
-      border: getVar("--border"),
-      accent: getVar("--accent"),
+      primary: rootStyle.getPropertyValue("--primary").trim(),
+      background: rootStyle.getPropertyValue("--background").trim(),
+      border: rootStyle.getPropertyValue("--border").trim(),
+      mutedForeground: rootStyle.getPropertyValue("--muted-foreground").trim(),
+      foreground: rootStyle.getPropertyValue("--foreground").trim(),
+      accent: rootStyle.getPropertyValue("--accent").trim(),
     };
 
     const currentLayoutData = getKeyboardLayout(layout, includeNumbers);
     const DRAW_OFFSET_Y = includeNumbers ? OFFSET_Y + 70 : OFFSET_Y;
 
-    // 2. GEOMETRY (Using your refined UI values)
-    const KEY_SIZE = 56;
-    const RADIUS = 8;
-    const SPACING = 62;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 3. DRAW KEYS
     Object.keys(currentLayoutData).forEach((key) => {
       const pos = currentLayoutData[key];
       const x = pos.x * SPACING + OFFSET_X;
       const y = pos.y * SPACING + DRAW_OFFSET_Y;
-
-      const isActive = text.toUpperCase().includes(key);
       const isLatest = text.toUpperCase().endsWith(key);
+      const isActive = text.toUpperCase().includes(key);
 
       ctx.beginPath();
       ctx.roundRect(
@@ -70,38 +90,38 @@ const KeyboardSignature = () => {
         RADIUS,
       );
 
-      if (isLatest) {
-        // THE "HIT" STATE: Transition feel
+      if (isLatest && text.length > 0) {
         ctx.fillStyle = colors.accent;
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-      } else if (isActive) {
-        // PART OF THE SIGNATURE: Active but not the current "hit"
-        ctx.fillStyle = colors.background;
-        ctx.strokeStyle = colors.border;
-        ctx.lineWidth = 1;
       } else {
-        // DEFAULT STATE
         ctx.fillStyle = colors.background;
-        ctx.globalAlpha = 0.4; // Subtle inactive look
         ctx.strokeStyle = colors.border;
         ctx.lineWidth = 1;
       }
 
       ctx.fill();
-      ctx.globalAlpha = 1.0;
       ctx.stroke();
 
-      // DRAW LABELS: Centered as per your photo
-      ctx.font = "600 16px var(--font-sans)";
+      ctx.font = "600 20px var(--font-sans)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillStyle = isActive ? colors.foreground : colors.mutedForeground;
-
       ctx.fillText(key, x, y);
     });
+  }, [text, layout, includeNumbers, color]);
 
-    // 4. DRAW SIGNATURE PATH
+  // 3. DRAW SIGNATURE LAYER
+  useEffect(() => {
+    const canvas = pathCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const currentLayoutData = getKeyboardLayout(layout, includeNumbers);
+    const DRAW_OFFSET_Y = includeNumbers ? OFFSET_Y + 70 : OFFSET_Y;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     const points = text
       .toUpperCase()
       .split("")
@@ -120,32 +140,24 @@ const KeyboardSignature = () => {
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.lineWidth = strokeWidth;
-
-      // Signature glow
-      ctx.shadowBlur = 2;
+      ctx.shadowBlur = 12;
       ctx.shadowColor = color;
 
       if (strokeStyle === "gradient") {
-        // FIX: Calculate the bounding box of the whole path
         const xCoords = pixelPoints.map((p) => p.x);
         const yCoords = pixelPoints.map((p) => p.y);
-
         const minX = Math.min(...xCoords);
         const maxX = Math.max(...xCoords);
         const minY = Math.min(...yCoords);
         const maxY = Math.max(...yCoords);
 
-        /**
-         * BUG FIX: If you start and end on the same key, maxX === minX.
-         * A 0-length gradient is invisible. We add a 1px buffer to force visibility.
-         */
+        // Gradient Bug Fix: Ensure length is never 0
         const grad = ctx.createLinearGradient(
           minX,
           minY,
           maxX === minX ? maxX + 1 : maxX,
           maxY === minY ? maxY + 1 : maxY,
         );
-
         grad.addColorStop(0, color);
         grad.addColorStop(1, color2);
         ctx.strokeStyle = grad;
@@ -158,18 +170,26 @@ const KeyboardSignature = () => {
     }
   }, [
     text,
-    layout,
     curveType,
-    includeNumbers,
     color,
     color2,
     strokeWidth,
     strokeStyle,
+    layout,
+    includeNumbers,
   ]);
 
+  // Determine if keyboard should be visible
+  // It shows if: No text is entered OR User is currently typing
+  const showKeyboard = text.length === 0 || isTyping;
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
-      <div className="flex flex-col items-center justify-center w-auto">
+    <div className="flex flex-col items-center justify-start min-h-screen p-8 bg-background transition-colors duration-500">
+      {/* Header & Options */}
+      <div className="w-full max-w-4xl flex items-center justify-between mb-12">
+        <h1 className="text-xl font-bold tracking-tight opacity-80">
+          Digitized Signature
+        </h1>
         <Options
           layout={layout}
           setLayout={setLayout}
@@ -186,14 +206,57 @@ const KeyboardSignature = () => {
           color2={color2}
           setColor2={setColor2}
         />
+      </div>
+
+      {/* Visible Themed Input */}
+      <div className="relative w-full max-w-md mb-16">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter your name"
-          className="border-b text-2xl mt-2 text-center text-primary focus:outline-none focus:border-primary transition-all font-light tracking-widest"
+          className="w-full bg-transparent border-b-2 border-muted hover:border-primary focus:border-primary outline-none py-4 text-3xl font-medium text-center transition-all duration-300 placeholder:text-muted-foreground/30"
+          autoFocus
         />
-        <canvas ref={canvasRef} width={680} height={300} />
+        {text.length > 0 && (
+          <button
+            onClick={() => setText("")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* The Drawing Area */}
+      <div className="relative w-full max-w-6xl h-[550px] flex items-center justify-center">
+        {/* LAYER 1: The Keyboard (With Motion) */}
+        <motion.div
+          animate={{
+            opacity: showKeyboard ? 1 : 0,
+            scale: showKeyboard ? 1 : 0.97,
+            filter: showKeyboard ? "blur(0px)" : "blur(10px)",
+          }}
+          transition={{ duration: 0.8, ease: "circOut" }}
+          className="absolute inset-0 z-0"
+        >
+          <canvas
+            ref={keyboardCanvasRef}
+            width={1200}
+            height={600}
+            className="w-full h-full object-contain opacity-40 dark:opacity-100"
+          />
+        </motion.div>
+
+        {/* LAYER 2: The Signature Path (Always crisp) */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <canvas
+            ref={pathCanvasRef}
+            width={1200}
+            height={600}
+            className="w-full h-full object-contain"
+          />
+        </div>
       </div>
     </div>
   );
