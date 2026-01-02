@@ -28,7 +28,7 @@ const KeyboardSignature = () => {
   const pathCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // SHARED GEOMETRY - Keep these synced for perfect alignment
-  const OFFSET_X = 180;
+  const OFFSET_X = 260;
   const OFFSET_Y = 40;
   const KEY_SIZE = 56;
   const RADIUS = 8;
@@ -104,7 +104,7 @@ const KeyboardSignature = () => {
       ctx.fill();
       ctx.stroke();
 
-      ctx.font = "600 20px var(--font-san)";
+      ctx.font = "500 16px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillStyle = colors.foreground;
