@@ -16,7 +16,7 @@ const KeyboardSignature = () => {
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [color, setColor] = useState("#FFFFFF");
   const [color2, setColor2] = useState("#ec4899");
-  const [strokeWidth, setStrokeWidth] = useState(3);
+  const [strokeWidth, setStrokeWidth] = useState(2);
   const [strokeStyle, setStrokeStyle] = useState<"solid" | "gradient">("solid");
 
   // Animation States
@@ -29,7 +29,7 @@ const KeyboardSignature = () => {
 
   // SHARED GEOMETRY - Keep these synced for perfect alignment
   const OFFSET_X = 180;
-  const OFFSET_Y = 80;
+  const OFFSET_Y = 40;
   const KEY_SIZE = 56;
   const RADIUS = 8;
   const SPACING = 62;
@@ -62,6 +62,7 @@ const KeyboardSignature = () => {
     const rootStyle = getComputedStyle(document.documentElement);
     const colors = {
       primary: rootStyle.getPropertyValue("--primary").trim(),
+      secondary: rootStyle.getPropertyValue("--secondary").trim(),
       background: rootStyle.getPropertyValue("--background").trim(),
       border: rootStyle.getPropertyValue("--border").trim(),
       mutedForeground: rootStyle.getPropertyValue("--muted-foreground").trim(),
@@ -103,10 +104,10 @@ const KeyboardSignature = () => {
       ctx.fill();
       ctx.stroke();
 
-      ctx.font = "600 20px var(--font-sans)";
+      ctx.font = "600 20px var(--font-san)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillStyle = isActive ? colors.foreground : colors.mutedForeground;
+      ctx.fillStyle = colors.foreground;
       ctx.fillText(key, x, y);
     });
   }, [text, layout, includeNumbers, color]);
