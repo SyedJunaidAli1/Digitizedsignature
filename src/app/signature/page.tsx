@@ -339,7 +339,7 @@ const KeyboardSignature = () => {
           asChild // Use asChild if using a Next.js Link
         >
           <a
-            href="https://github.com/your-username/your-repo"
+            href="https://github.com/SyedJunaidAli1/digitizedsignature"
             target="_blank"
             rel="noreferrer"
           >
