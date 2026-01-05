@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   KeyboardLayout,
   CurveType,
@@ -165,6 +165,8 @@ const KeyboardSignature = () => {
             setStrokeStyle={setStrokeStyle}
             color2={color2}
             setColor2={setColor2}
+            setText={setText}
+            text={text}
           />
         </div>
 
@@ -265,24 +267,35 @@ const KeyboardSignature = () => {
       </div>
 
       {/* fixed actions */}
-      <div className="">
-        <div className="flex flex-col gap-4 items-center  backdrop-blur-md p-4 rounded-xl">
-          <ButtonGroup>
-            <Button onClick={exportSvg}>Export SVG</Button>
-            <ButtonGroupSeparator />
-            <Button onClick={exportPng}>Export PNG</Button>
-          </ButtonGroup>
-
-          <Button variant="outline" asChild>
-            <a
-              href="https://github.com/SyedJunaidAli1/digitizedsignature"
-              target="_blank"
-              rel="noreferrer"
+      <div>
+        {/* actions – appear after typing */}
+        <AnimatePresence>
+          {text.length > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="flex flex-col gap-4 items-center backdrop-blur-md p-4 rounded-xl"
             >
-              View on GitHub
-            </a>
-          </Button>
-        </div>
+              <ButtonGroup>
+                <Button onClick={exportSvg}>Export SVG</Button>
+                <ButtonGroupSeparator />
+                <Button onClick={exportPng}>Export PNG</Button>
+              </ButtonGroup>
+
+              <Button variant="outline" asChild>
+                <a
+                  href="https://github.com/SyedJunaidAli1/digitizedsignature"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on GitHub
+                </a>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

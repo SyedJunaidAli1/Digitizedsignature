@@ -34,6 +34,8 @@ interface OptionsProps {
   setStrokeStyle: (s: "solid" | "gradient") => void;
   color2: string;
   setColor2: (c: string) => void;
+  text: string;
+  setText: (t: string) => void;
 }
 
 const Options = ({
@@ -51,6 +53,8 @@ const Options = ({
   setStrokeStyle,
   strokeWidth,
   setStrokeWidth,
+  setText,
+  text,
 }: OptionsProps) => {
   const curveOptions: CurveType[] = [
     "linear",
@@ -201,6 +205,7 @@ const Options = ({
             setColor("#FFFFFF");
             setStrokeWidth(3);
             setCurveType("linear");
+            setText("");
           }}
         >
           Reset to Default
