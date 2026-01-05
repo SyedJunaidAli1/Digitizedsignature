@@ -5,12 +5,12 @@ import { getSessionCookie } from "better-auth/cookies";
 const protectedRoutes = ["/"];
 const authRoutes = ["/sign-in", "/sign-up"];
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const session = getSessionCookie(request);
   const { pathname } = request.nextUrl;
 
   // 🚫 Not logged in → trying to access protected routes
-  if (!session && protectedRoutes.some((route) => pathname.startsWith(route))) {
+  if (!session && protectedRoutes.some((route) => pathname === route)) {
     return NextResponse.redirect(new URL("/sign-up", request.url));
   }
 
