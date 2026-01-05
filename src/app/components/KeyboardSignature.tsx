@@ -15,6 +15,27 @@ import {
 } from "@/components/ui/button-group";
 import ThemeToggle from "./themeToggle";
 
+// Animation Variants for the initial load
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
 const KeyboardSignature = () => {
   const [text, setText] = useState("");
   const [layout, setLayout] = useState<KeyboardLayout>(KeyboardLayout.QWERTY);
@@ -143,9 +164,14 @@ const KeyboardSignature = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-background px-2 py-6">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="relative min-h-screen bg-background px-2 py-6"
+    >
       {/* header + options */}
-      <div className="flex flex-col items-center">
+      <motion.div variants={itemVariants} className="flex flex-col items-center">
         <div className="w-full max-w-4xl flex items-center justify-between mb-8">
           <h1 className="text-xl font-bold tracking-tight opacity-80">
             Digitized Signature
@@ -174,7 +200,7 @@ const KeyboardSignature = () => {
         </div>
 
         {/* input */}
-        <div className="relative w-full max-w-md mb-6">
+        <motion.div variants={itemVariants} className="relative w-full max-w-md mb-6">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -190,11 +216,11 @@ const KeyboardSignature = () => {
               Clear
             </Button>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* keyboard + signature */}
-      <div className="flex justify-center mt-6 mb-2">
+      <motion.div variants={itemVariants} className="flex justify-center mt-6 mb-2">
         <div className="relative">
           <motion.div
             animate={{ opacity: showKeyboard ? 1 : 0 }}
@@ -267,10 +293,10 @@ const KeyboardSignature = () => {
             )}
           </svg>
         </div>
-      </div>
+      </motion.div>
 
       {/* fixed actions */}
-      <div>
+      <motion.div variants={itemVariants}>
         {/* actions – appear after typing */}
         <AnimatePresence>
           {text.length > 1 && (
@@ -299,8 +325,8 @@ const KeyboardSignature = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
