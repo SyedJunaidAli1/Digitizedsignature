@@ -77,9 +77,7 @@ const KeyboardSignature = () => {
   }, [text, keyboardLayoutData, includeNumbers]);
 
   const signaturePath =
-    signaturePoints.length >= 2
-      ? generatePath(signaturePoints, curveType)
-      : "";
+    signaturePoints.length >= 2 ? generatePath(signaturePoints, curveType) : "";
 
   // exports
   const exportSvg = () => {
@@ -102,9 +100,7 @@ const KeyboardSignature = () => {
         <path
           d="${signaturePath}"
           fill="none"
-          stroke="${
-            strokeStyle === "solid" ? color : "url(#g)"
-          }"
+          stroke="${strokeStyle === "solid" ? color : "url(#g)"}"
           stroke-width="${strokeWidth}"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -193,7 +189,7 @@ const KeyboardSignature = () => {
       </div>
 
       {/* keyboard + signature */}
-      <div className="flex justify-center mt-6 mb-28">
+      <div className="flex justify-center mt-6 mb-2">
         <div className="relative">
           <motion.div
             animate={{ opacity: showKeyboard ? 1 : 0 }}
@@ -216,8 +212,8 @@ const KeyboardSignature = () => {
                       isLatest
                         ? "bg-primary text-primary-foreground scale-110"
                         : isActive
-                        ? "bg-muted text-foreground"
-                        : "bg-transparent text-muted-foreground border-border"
+                          ? "bg-muted text-foreground"
+                          : "bg-transparent text-muted-foreground border-border"
                     }
                   `}
                   style={{
@@ -239,7 +235,13 @@ const KeyboardSignature = () => {
           >
             <defs>
               {strokeStyle === "gradient" && (
-                <linearGradient id="signatureGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="signatureGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor={color} />
                   <stop offset="100%" stopColor={color2} />
                 </linearGradient>
@@ -250,9 +252,7 @@ const KeyboardSignature = () => {
               <path
                 d={signaturePath}
                 stroke={
-                  strokeStyle === "solid"
-                    ? color
-                    : "url(#signatureGradient)"
+                  strokeStyle === "solid" ? color : "url(#signatureGradient)"
                 }
                 strokeWidth={strokeWidth}
                 fill="none"
@@ -265,8 +265,8 @@ const KeyboardSignature = () => {
       </div>
 
       {/* fixed actions */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
-        <div className="flex flex-col gap-4 items-center bg-background/80 backdrop-blur-md p-4 rounded-xl border">
+      <div className="">
+        <div className="flex flex-col gap-4 items-center  backdrop-blur-md p-4 rounded-xl">
           <ButtonGroup>
             <Button onClick={exportSvg}>Export SVG</Button>
             <ButtonGroupSeparator />
